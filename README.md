@@ -12,4 +12,5 @@ newCasesPeak - Returns the date (and value) of the highest peak of new Covid-19 
 recoveredPeak - Returns the date (and value) of the highest peak of recovered Covid-19 cases in the last 30 days for the required country.
 
 deathsPeak - Returns the date (and value) of the highest peak of death Covid-19 cases in the last 30 days for a required country.
+
 status - Returns a value of success / fail to contact the backend API
