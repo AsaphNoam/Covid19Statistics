@@ -1,7 +1,7 @@
 # Covid19Statistics
 
 Useage:
-localhost:5000/<method>?country=<country>
+localhost:5000/"method"?country="country"
 
 Example - curl localhost:5000/newCasesPeak?country=canada
 
