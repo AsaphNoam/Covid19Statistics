@@ -15,14 +15,15 @@ from_date = cur_date - timedelta(days=30)
 # Drop hours/minutes/seconds from date
 cur_date = str(cur_date).split(" ")[0]
 from_date = str(from_date).split(" ")[0]
-response = requests.get(f"https://api.covid19tracking.narrativa.com/api?date_from={from_date}&date_to={cur_date}")
+print(from_date)
 
 
 def find_peak_attribute(attr_name, country):
+    response = requests.get(f"https://api.covid19tracking.narrativa.com/api/country/{country}?date_from={from_date}&date_to={cur_date}")
     data = response.json()
     max_value, max_day = 0, ""
     for day in data["dates"]:
-        day_data = data["dates"][day]["countries"][country.capitalize()]
+        day_data = data["dates"][day]["countries"][country.title()]
         attr_value = day_data[attr_name]
         max_value = max(attr_value, max_value)
         if max_value == attr_value:
@@ -36,13 +37,10 @@ def format_response(country, method, val, date):
     return json.dumps(res)
 
 
-@app.route('/')
-def hello_world():
-    return response.json()
-
-
 @app.route('/status')
 def status():
+    # Check today's data for israel as a status check
+    response = requests.get(f"https://api.covid19tracking.narrativa.com/api/{cur_date}/country/Israel")
     code = response.status_code
     result = "success" if 200 <= code < 300 else "failure"
     res = {"status": result}
