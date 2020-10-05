@@ -1,11 +1,31 @@
 pipeline {
   agent any
   stages {
-    stage('') {
+    stage('error') {
       steps {
-        sh 'curl localhost:5000/status'
-      }
-    }
+        sh '''pipeline {
+    agent any
 
+    stages {
+        stage(\'Build\') {
+            steps {
+                echo \'Building..\'
+            }
+        }
+        stage(\'Test\') {
+            steps {
+                echo \'Testing..\'
+            }
+        }
+        stage(\'Deploy\') {
+            steps {
+                echo \'Deploying....\'
+            }
+        }
+    }
+}'''
+        }
+      }
+
+    }
   }
-}
