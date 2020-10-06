@@ -24,7 +24,10 @@ def find_peak_attribute(attr_name, country):
     data = response.json()
     max_value, max_day = 0, ""
     for day in data["dates"]:
-        day_data = data["dates"][day]["countries"][country.title()]
+        if country.lower in ["usa", "us", "united states", "america"]:
+            day_data = data["dates"][day]["countries"]["US"]
+        else:
+            day_data = data["dates"][day]["countries"][country.title()]
         attr_value = day_data[attr_name]
         max_value = max(attr_value, max_value)
         if max_value == attr_value:
