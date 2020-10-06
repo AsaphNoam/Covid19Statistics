@@ -1,6 +1,4 @@
 from datetime import datetime, timedelta
-import sys
-import os
 import requests
 from flask import Flask
 from flask import request
@@ -10,12 +8,16 @@ NEW_CASES = "today_new_confirmed"
 RECOVERED = "today_new_recovered"
 DEATHS = "today_new_deaths"
 app = Flask(__name__)
+
 # Get the current date and the date 30 days ago, and keep them as strings
 cur_date = datetime.now()
 from_date = cur_date - timedelta(days=30)
+
 # Drop hours/minutes/seconds from date
 cur_date = str(cur_date).split(" ")[0]
 from_date = str(from_date).split(" ")[0]
+
+'''Find the peak attribute by attribute name and country'''
 
 
 def find_peak_attribute(attr_name, country):
@@ -24,7 +26,9 @@ def find_peak_attribute(attr_name, country):
         f"https://api.covid19tracking.narrativa.com/api/country/{country}?date_from={from_date}&date_to={cur_date}")
     data = response.json()
     max_value, max_day = 0, ""
+    # Find the max value and day from all days
     for day in data["dates"]:
+        # Created a special case since there are many ways to spell the US, and it's likely to be queried
         if country.lower() in ["usa", "us", "united states", "america"]:
             day_data = data["dates"][day]["countries"]["US"]
         else:
@@ -35,6 +39,9 @@ def find_peak_attribute(attr_name, country):
             max_day = day
 
     return max_value, max_day
+
+
+'''Format the result as a JSON string'''
 
 
 def format_response(country, method, val, date):
@@ -55,6 +62,7 @@ def status():
 
 @app.route('/newCasesPeak')
 def new_cases_peak():
+    # Get the requested country and the peak date and value
     country = request.args.get("country")
     val, date = find_peak_attribute(NEW_CASES, country)
     res = format_response(country, "newCasesPeak", val, date)
@@ -63,6 +71,7 @@ def new_cases_peak():
 
 @app.route('/recoveredPeak')
 def recovered_peak():
+    # Get the requested country and the peak date and value
     country = request.args.get("country")
     val, date = find_peak_attribute(RECOVERED, country)
     res = format_response(country, "recoveredPeak", val, date)
@@ -71,6 +80,7 @@ def recovered_peak():
 
 @app.route('/deathsPeak')
 def deaths_peak():
+    # Get the requested country and the peak date and value
     country = request.args.get("country")
     val, date = find_peak_attribute(DEATHS, country)
     res = format_response(country, "deathsPeak", val, date)
