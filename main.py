@@ -16,15 +16,16 @@ from_date = cur_date - timedelta(days=30)
 # Drop hours/minutes/seconds from date
 cur_date = str(cur_date).split(" ")[0]
 from_date = str(from_date).split(" ")[0]
-print(from_date)
 
 
 def find_peak_attribute(attr_name, country):
-    response = requests.get(f"https://api.covid19tracking.narrativa.com/api/country/{country}?date_from={from_date}&date_to={cur_date}")
+    # Create the request from the API
+    response = requests.get(
+        f"https://api.covid19tracking.narrativa.com/api/country/{country}?date_from={from_date}&date_to={cur_date}")
     data = response.json()
     max_value, max_day = 0, ""
     for day in data["dates"]:
-        if country.lower in ["usa", "us", "united states", "america"]:
+        if country.lower() in ["usa", "us", "united states", "america"]:
             day_data = data["dates"][day]["countries"]["US"]
         else:
             day_data = data["dates"][day]["countries"][country.title()]
@@ -33,7 +34,7 @@ def find_peak_attribute(attr_name, country):
         if max_value == attr_value:
             max_day = day
 
-    return max_value,max_day
+    return max_value, max_day
 
 
 def format_response(country, method, val, date):
@@ -46,6 +47,7 @@ def status():
     # Check today's data for israel as a status check
     response = requests.get(f"https://api.covid19tracking.narrativa.com/api/{cur_date}/country/Israel")
     code = response.status_code
+    # If the result returned a 2xx code, return success, otherwise failure
     result = "success" if 200 <= code < 300 else "failure"
     res = {"status": result}
     return json.dumps(res)
@@ -78,6 +80,7 @@ def deaths_peak():
 @app.errorhandler(404)
 def page_not_found(error):
     return "{}"
+
 
 @app.errorhandler(500)
 def page_not_found(error):
